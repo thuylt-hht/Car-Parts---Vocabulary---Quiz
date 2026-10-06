@@ -33,10 +33,61 @@
             font-size: 14px;
             margin-bottom: 20px;
         }
+        /* Form nhập thông tin sinh viên */
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2d3748;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border-color: #3182ce;
+            outline: none;
+        }
+        .start-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .start-btn:hover {
+            background-color: #2b6cb0;
+        }
+
+        /* Thanh thông tin sinh viên */
+        .student-info-bar {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #2b6cb0;
+            display: flex;
+            justify-content: space-between;
+        }
         .progress-bar {
             font-size: 14px;
             font-weight: bold;
-            color: #2b6cb0;
+            color: #4a5568;
             margin-bottom: 15px;
         }
         .question-box {
@@ -118,16 +169,39 @@
     <h1>Kiểm Tra Từ Vựng Tiếng Anh Chuyên Ngành Ô Tô</h1>
     <p class="subtitle">Giáo trình: English for Automobiles</p>
 
-    <div id="quiz-screen">
+    <!-- 1. Màn hình nhập thông tin sinh viên -->
+    <div id="welcome-screen">
+        <div class="input-group">
+            <label for="student-name">Họ và tên sinh viên:</label>
+            <input type="text" id="student-name" placeholder="Ví dụ: Nguyễn Văn A" required>
+        </div>
+        <div class="input-group">
+            <label for="student-class">Lớp / Mã sinh viên:</label>
+            <input type="text" id="student-class" placeholder="Ví dụ: CĐ Ô tô 15A" required>
+        </div>
+        <button class="start-btn" onclick="startQuiz()">Bắt đầu làm bài ➔</button>
+    </div>
+
+    <!-- 2. Màn hình câu hỏi trắc nghiệm -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="student-info-bar">
+            <span id="display-student-name">Sinh viên: </span>
+            <span id="display-student-class">Lớp: </span>
+        </div>
         <div class="progress-bar" id="progress-text">Câu hỏi 1 / 20</div>
         <div class="question-box" id="question-text">Đang tải câu hỏi...</div>
         <div class="options-container" id="options-box"></div>
         <button class="next-btn" id="next-btn" onclick="nextQuestion()">Câu tiếp theo ➔</button>
     </div>
 
+    <!-- 3. Màn hình kết quả -->
     <div class="result-box" id="result-screen">
-        <h2>Hoàn thành bài kiểm tra!</h2>
-        <p>Kết quả của bạn:</p>
+        <h2>KẾT QUẢ BÀI KIỂM TRA</h2>
+        <div class="student-info-bar" style="justify-content: center; gap: 20px;">
+            <span id="result-student-name"></span>
+            <span id="result-student-class"></span>
+        </div>
+        <p>Số câu trả lời đúng:</p>
         <div class="result-score" id="score-text">0 / 20</div>
         <button class="restart-btn" onclick="restartQuiz()">Làm lại bài kiểm tra</button>
     </div>
@@ -163,6 +237,29 @@
     let currentQuestionIndex = 0;
     let score = 0;
     let selected = false;
+    let studentName = "";
+    let studentClass = "";
+
+    function startQuiz() {
+        const nameInput = document.getElementById("student-name").value.trim();
+        const classInput = document.getElementById("student-class").value.trim();
+
+        if (nameInput === "" || classInput === "") {
+            alert("Vui lòng nhập đầy đủ Họ tên và Lớp trước khi bắt đầu làm bài!");
+            return;
+        }
+
+        studentName = nameInput;
+        studentClass = classInput;
+
+        document.getElementById("display-student-name").innerText = "Sinh viên: " + studentName;
+        document.getElementById("display-student-class").innerText = "Lớp: " + studentClass;
+
+        document.getElementById("welcome-screen").style.display = "none";
+        document.getElementById("quiz-screen").style.display = "block";
+
+        loadQuestion();
+    }
 
     function loadQuestion() {
         selected = false;
@@ -211,19 +308,21 @@
     function showResult() {
         document.getElementById("quiz-screen").style.display = "none";
         document.getElementById("result-screen").style.display = "block";
+        
+        document.getElementById("result-student-name").innerText = "Sinh viên: " + studentName;
+        document.getElementById("result-student-class").innerText = "Lớp: " + studentClass;
         document.getElementById("score-text").innerText = `${score} / ${questions.length}`;
     }
 
     function restartQuiz() {
         currentQuestionIndex = 0;
         score = 0;
-        document.getElementById("quiz-screen").style.display = "block";
+        document.getElementById("welcome-screen").style.display = "block";
+        document.getElementById("quiz-screen").style.display = "none";
         document.getElementById("result-screen").style.display = "none";
-        loadQuestion();
+        document.getElementById("student-name").value = "";
+        document.getElementById("student-class").value = "";
     }
-
-    // Khởi chạy bài trắc nghiệm
-    loadQuestion();
 </script>
 
 </body>
