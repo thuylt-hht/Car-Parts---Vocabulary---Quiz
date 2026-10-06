@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Từ Vựng Tiếng Anh Ô Tô</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+        }
+        h1 {
+            color: #1a365d;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin-bottom: 15px;
+        }
+        .question-box {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            color: #2d3748;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover {
+            background-color: #ebf8ff;
+            border-color: #3182ce;
+        }
+        .option-btn.correct {
+            background-color: #c6f6d5;
+            border-color: #38a169;
+            color: #22543d;
+        }
+        .option-btn.incorrect {
+            background-color: #fed7d7;
+            border-color: #e53e3e;
+            color: #742a2a;
+        }
+        .next-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+        .next-btn:hover {
+            background-color: #2b6cb0;
+        }
+        .result-box {
+            text-align: center;
+            display: none;
+        }
+        .result-score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin: 15px 0;
+        }
+        .restart-btn {
+            padding: 10px 20px;
+            background-color: #38a169;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>Kiểm Tra Từ Vựng Tiếng Anh Chuyên Ngành Ô Tô</h1>
+    <p class="subtitle">Giáo trình: English for Automobiles</p>
+
+    <div id="quiz-screen">
+        <div class="progress-bar" id="progress-text">Câu hỏi 1 / 20</div>
+        <div class="question-box" id="question-text">Đang tải câu hỏi...</div>
+        <div class="options-container" id="options-box"></div>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Câu tiếp theo ➔</button>
+    </div>
+
+    <div class="result-box" id="result-screen">
+        <h2>Hoàn thành bài kiểm tra!</h2>
+        <p>Kết quả của bạn:</p>
+        <div class="result-score" id="score-text">0 / 20</div>
+        <button class="restart-btn" onclick="restartQuiz()">Làm lại bài kiểm tra</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // 10 từ vựng bên trong (The Interior)
+        { q: "Từ tiếng Anh nào chỉ 'Vô-lăng / Tay lái' của ô tô?", options: ["Steering wheel", "Dashboard", "Gearstick", "Handbrake"], answer: 0 },
+        { q: "'Dashboard' trong nội thất ô tô có nghĩa là gì?", options: ["Kính chắn gió", "Bảng điều khiển / Táplô", "Bàn đạp phanh", "Hộc đựng đồ"], answer: 1 },
+        { q: "Bộ phận 'Cần số' trong tiếng Anh chuyên ngành ô tô là gì?", options: ["Accelerator", "Clutch pedal", "Gearstick", "Sun visor"], answer: 2 },
+        { q: "'Handbrake' được dùng để chỉ bộ phận nào?", options: ["Phanh tay", "Bàn đạp ga", "Dây an toàn", "Cản trước"], answer: 0 },
+        { q: "Bàn đạp ga trong xe ô tô tiếng Anh gọi là gì?", options: ["Brake pedal", "Accelerator", "Clutch pedal", "Air vent"], answer: 1 },
+        { q: "'Brake pedal' có nghĩa là gì?", options: ["Bàn đạp ly hợp", "Bàn đạp phanh", "Cần gạt nước", "Ống xả"], answer: 1 },
+        { q: "Bộ phận 'Bàn đạp ly hợp (côn)' trong tiếng Anh là gì?", options: ["Clutch pedal", "Accelerator", "Brake pedal", "Gearstick"], answer: 0 },
+        { q: "'Glove compartment' dùng để chỉ vị trí nào trong cabin xe?", options: ["Tấm chắn nắng", "Cửa gió điều hòa", "Hộc đựng đồ bên phụ", "Gương chiếu hậu trong"], answer: 2 },
+        { q: "Dây đai an toàn trong ô tô được gọi là gì?", options: ["Seat belt", "Headlight", "Indicator", "Windscreen"], answer: 0 },
+        { q: "'Rear-view mirror' là thuật ngữ chỉ loại gương nào?", options: ["Gương chiếu hậu bên ngoài", "Gương chiếu hậu bên trong xe", "Kính chắn gió", "Cửa sổ trời"], answer: 1 },
+
+        // 10 từ vựng bên ngoài (The Exterior)
+        { q: "Nắp ca-pô xe ô tô (British English) gọi là gì?", options: ["Bonnet", "Boot", "Tyre", "Wing"], answer: 0 },
+        { q: "'Windscreen' trong tiếng Anh ô tô là gì?", options: ["Ống xả", "Kính chắn gió", "Lốp xe", "Cản trước"], answer: 1 },
+        { q: "Đèn pha ô tô tiếng Anh gọi là gì?", options: ["Indicator", "Headlight", "Rear light", "Fog light"], answer: 1 },
+        { q: "'Front bumper' là thuật ngữ chỉ bộ phận nào?", options: ["Cản sau", "Cản trước", "Nắp ca-pô", "Biển số xe"], answer: 1 },
+        { q: "Đèn xi-nhan báo rẽ tiếng Anh là gì?", options: ["Indicator", "Headlight", "Wing mirror", "Exhaust pipe"], answer: 0 },
+        { q: "'Wing mirror' là loại gương nào trên xe?", options: ["Gương chiếu hậu trong", "Gương chiếu hậu bên ngoài", "Kính hậu", "Đèn sương mờ"], answer: 1 },
+        { q: "Cốp chứa đồ phía sau xe ô tô (British English) gọi là gì?", options: ["Boot", "Bonnet", "Roof", "Sill"], answer: 0 },
+        { q: "'Tyre' (hoặc Tire) nghĩa là gì?", options: ["Vành xe", "Lốp xe", "Cản sau", "Tay nắm cửa"], answer: 1 },
+        { q: "Bộ phận 'Ống xả' xả khí thải ra ngoài tiếng Anh là gì?", options: ["Windscreen wiper", "Exhaust pipe", "Petrol cap", "Number plate"], answer: 1 },
+        { q: "'Windscreen wiper' dùng để chỉ bộ phận nào?", options: ["Cần gạt nước kính chắn gió", "Đèn pha", "Kính hông xe", "Đèn hậu"], answer: 0 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selected = false;
+
+    function loadQuestion() {
+        selected = false;
+        const q = questions[currentQuestionIndex];
+        document.getElementById("progress-text").innerText = `Câu hỏi ${currentQuestionIndex + 1} / ${questions.length}`;
+        document.getElementById("question-text").innerText = q.q;
+        
+        const optionsBox = document.getElementById("options-box");
+        optionsBox.innerHTML = "";
+        document.getElementById("next-btn").style.display = "none";
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index, q.answer, btn);
+            optionsBox.appendChild(btn);
+        });
+    }
+
+    function selectOption(selectedIndex, correctIndex, btn) {
+        if (selected) return;
+        selected = true;
+
+        const allButtons = document.querySelectorAll(".option-btn");
+        if (selectedIndex === correctIndex) {
+            btn.classList.add("correct");
+            score++;
+        } else {
+            btn.classList.add("incorrect");
+            allButtons[correctIndex].classList.add("correct");
+        }
+
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "block";
+        document.getElementById("score-text").innerText = `${score} / ${questions.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById("quiz-screen").style.display = "block";
+        document.getElementById("result-screen").style.display = "none";
+        loadQuestion();
+    }
+
+    // Khởi chạy bài trắc nghiệm
+    loadQuestion();
+</script>
+
+</body>
+</html>
